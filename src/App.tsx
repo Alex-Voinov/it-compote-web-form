@@ -9,7 +9,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<NavigationMenu />} />
+        <Route path="/login" element={<NavigationMenu />} />
         <Route path="/comments " element={<Comments />} />
         <Route path="/calculate-selary" element={<CalculateSelary />} />
         <Route path="/timetable" element={<Timetable />} />

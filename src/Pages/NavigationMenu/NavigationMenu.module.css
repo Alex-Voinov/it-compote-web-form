@@ -7,6 +7,20 @@
     justify-content: center;
     flex-direction: column;
 
+    &>h1{
+        color: #E8EDEE;
+        font-size: 2vw;
+        text-align: center;
+    }
+
+    &>p{
+        color: #E8EDEE;
+        font-size: 1.6vw;
+        text-align: center;
+        margin-top: 1vw;
+        margin-bottom: 1vw;
+    }
+
     &>input {
         color: #E8EDEE;
         cursor: text;
@@ -43,10 +57,22 @@
         border: 1px solid #EA3554;
         border-radius: 2vw;
         cursor: pointer;
-        transition: background-color 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
 
         &:hover {
             background-color: #EA3554;
         }
+
+        &.hidden:hover {
+            background-color: transparent;
+            color: transparent;
+            border-color: transparent;
+            cursor: not-allowed;
+        }
     }
+}
+
+.wrapperLoader{
+    width: 20vw;
+    height: 20vw;
 }
