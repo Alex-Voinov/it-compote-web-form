@@ -12,9 +12,44 @@
 .activitiesList{
     width: 40%;
     height: 100%;
-    border-right: 1px solid #b5bec0;
+    border-right: 1px solid #34393D;
     padding: 2vw;
     overflow: auto;
+    &::-webkit-scrollbar {
+        width: 0.4vw;
+        height: 0.46296vh;
+        background-color: #34393D;
+    
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: #b5bec0 !important;
+        border-radius: min(0.15625vw, 0.27778vh) min(0.26042vw, 0.46296vh) min(0.26042vw, 0.46296vh) min(0.15625vw, 0.27778vh) !important
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+        border-radius: 1em !important
+    }
+    
+    &::-webkit-scrollbar-button:vertical:start:decrement {
+        background-color: #b5bec0 !important;
+        display: none
+    }
+    
+    &::-webkit-scrollbar-button:vertical:end:increment {
+        background-color: #b5bec0 !important;
+        display: none
+    }
+    
+    &::-webkit-scrollbar-button:horizontal:start:decrement {
+        background-color: #b5bec0;
+        display: none
+    }
+    
+    &::-webkit-scrollbar-button:horizontal:end:increment {
+        background-color: #b5bec0;
+        display: none
+    }
 }
 
 .findedActivities{
