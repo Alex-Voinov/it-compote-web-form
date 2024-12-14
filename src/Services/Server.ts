@@ -36,7 +36,16 @@ export default class Server {
         )
     }
 
-    static getActivitiesForTeacherWithoutThemes(): Promise<AxiosResponse<IActivity>> {
-        return $api.get<ITeacher>('/get-activities-for-teacher-without-themes')
+    static getActivitiesForTeacherWithoutThemes(
+        teacherId: string
+    ): Promise<AxiosResponse<IActivity[]>> {
+        return $api.get<IActivity[]>(
+            '/get-activities-for-teacher-without-themes',
+            {
+                params: {
+                    teacherId
+                }
+            }
+        )
     }
 }

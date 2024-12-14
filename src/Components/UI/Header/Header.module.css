@@ -5,19 +5,19 @@
     height: 4vw;
     background-color: #34393D;
     justify-content: space-between;
-    padding-left: 5vw;
-    padding-right: 5vw;
+    padding-left: 2vw;
+    padding-right: 2vw;
     color: #969FA1;
+    font-size: 1vw;
 
     &>nav{
         display: flex;
         align-items: center;
         height: 100%;
-        &>.navigatePoint{
-            width: 12vw;
+        &>.navigatePoint{      
             height: 100%;
             display: flex;
-            margin-left: 2vw;
+            margin-right: 4vw;
             align-items: center;
             justify-content: center;
             & > a{

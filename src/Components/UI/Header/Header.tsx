@@ -37,7 +37,7 @@ const Header: FC = () => {
                     </div>
                 })}
             </nav>
-            <div>{teacher.teacer?.LastName} {teacher.teacer?.FirstName}</div>
+            <div>{teacher.teacher?.LastName} {teacher.teacher?.FirstName}</div>
         </header>
     )
 }
