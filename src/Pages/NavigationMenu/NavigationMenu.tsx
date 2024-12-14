@@ -1,18 +1,22 @@
-import { FC, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import styles from './NavigationMenu.module.css'
 import Server from '../../Services/Server';
 import Loader from '../../Components/Decoration/Loader/Loader';
+import { useNavigate } from 'react-router-dom';
+import { GlobalData } from '../../main';
 
 const unknownError = 'Неизвестная ошибка'
 const beautifulLoginLength = 14
 
 const NavigationMenu: FC = () => {
+    const {teacher} = useContext(GlobalData)
+    const navigate = useNavigate()
     const [email, setEmail] = useState('');
     const [isLoading, setLoading] = useState(false)
     const [password, setPassword] = useState('');
     const [erMessage, setErMessage] = useState('')
     const hasEmptyField = !(email.length > 0 && password.length > 0)
-    console.log(erMessage)
+
     return (
         <section className={styles.wrapper}>
             {isLoading
@@ -55,10 +59,12 @@ const NavigationMenu: FC = () => {
                                 e.preventDefault();
                                 setLoading(true)
                                 Server.verifyTeacher(email, password).then(
-                                    res => { console.log(123) }
+                                    res => {
+                                        teacher.setTeacherCode(email, password, res.data)
+                                        navigate('/comments')
+                                    }
                                 ).catch(
                                     er => {
-                                        console.log(er)
                                         const erMsg = er.response.data.message
                                         setErMessage((er.status === 404 && erMsg) ? erMsg : unknownError)
                                     }

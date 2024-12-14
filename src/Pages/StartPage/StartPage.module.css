@@ -1,0 +1,22 @@
+.wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #212429;
+
+    &>.wrapperLoader {
+        width: 30vw;
+        height: 30vw;
+    }
+
+    &>h2 {
+        color: #E8EDEE;
+        font-size: 1.6vw;
+        text-align: center;
+        margin-top: 6vw;
+    }
+}
