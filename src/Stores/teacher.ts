@@ -14,6 +14,15 @@ export default class Teacher {
         makeAutoObservable(this)
     }
 
+    logout() {
+        this.teacher = null
+        this.teacherCode = ''
+        this.activitiesWithoutthemes = null
+        this.isAuth = false
+        localStorage.setItem('teacherCode', '');
+        localStorage.setItem('teacherEmail', '');
+    }
+
     setTeacherCode(email: string, code: string, teacher: ITeacher) {
         this.teacherCode = code;
         this.isAuth = true;

@@ -1,17 +1,22 @@
-import { FC, useContext, useEffect } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import Header from '../../Components/UI/Header/Header'
 import styles from './Comments.module.css'
 import { observer } from 'mobx-react-lite'
 import { GlobalData } from '../../main'
 import IActivity from '../../models/Activity'
-
+import Loader from '../../Components/Decoration/Loader/Loader'
 
 const Comments: FC = () => {
     const { teacher } = useContext(GlobalData)
+    const [isLoading, setLoading] = useState(false)
     useEffect(() => {
-        if (teacher.activitiesWithoutthemes === null)
-            teacher.getActivitiesForTeacherWithoutThemes();
-    }, [])
+        if (teacher.activitiesWithoutthemes === null && teacher.teacher) {
+            setLoading(true);
+            teacher.getActivitiesForTeacherWithoutThemes().finally(
+                () => setLoading(false)
+            )
+        }
+    }, [teacher.teacher])
     const activities = (teacher.activitiesWithoutthemes === null ? [] : teacher.activitiesWithoutthemes) as IActivity[]
     return (
         <section className={styles.wrapper}>
@@ -21,16 +26,34 @@ const Comments: FC = () => {
                     <h2>
                         Выберите занятие:
                     </h2>
-                    {activities.length === 0
-                        ? <div>
-                            Нет уроков требующий указания темы
-                        </div>
-                        : activities.map(
-                            activity => <div key={activity.Id}>
-                                {activity.Name}
+                    {
+                        isLoading ?
+                            <div className={styles.wrapperLoader}>
+                                <Loader />
                             </div>
-                        )
-                    }
+                            : (activities.length === 0
+                                ? <div className={styles.notFindedActivities}>
+                                    Нет уроков, требующих указания темы
+                                    <button onClick={e => {
+                                        e.preventDefault();
+                                        setLoading(true);
+                                        teacher.getActivitiesForTeacherWithoutThemes().finally(
+                                            () => setLoading(false)
+                                        )
+                                    }}>
+                                        Обновить
+                                    </button>
+                                </div>
+                                : activities.map(
+                                    activity => <div
+                                        className={styles.findedActivities}
+                                        key={activity.Id}
+                                    >
+                                        <div>{activity.Name}: {activity.Type}</div>
+                                        <div>{activity.Discipline}</div>
+                                    </div>
+                                )
+                            )}
                 </section>
                 <section></section>
             </main>

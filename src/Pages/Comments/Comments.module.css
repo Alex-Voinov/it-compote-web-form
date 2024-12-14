@@ -16,3 +16,53 @@
     padding: 2vw;
     overflow: auto;
 }
+
+.findedActivities{
+    width: 98%;
+    height: 4vw;
+    background-color: #34393D;
+    border-radius: 1vw;
+    margin-top: 1vw;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 1vw;
+    font-size: 0.8vw;
+    &>div{
+        width: 100%;
+        height: 40%;
+    }
+}
+
+.notFindedActivities{
+    border: 1px solid #b5bec0;
+    margin-top: 1vw;
+    height: calc(100vh - 12vw);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1vw;
+    &>button{
+        width: 8vw;
+        height: 2vw;
+        margin-top: 2vw;
+    }
+}
+
+.wrapperLoader{
+    height: calc(100vh - 12vw);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    &>img{
+       width: 20vw;
+    }
+}

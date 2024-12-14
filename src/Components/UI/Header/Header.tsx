@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite';
 import { GlobalData } from '../../../main';
 import { useNavigate, Link } from 'react-router-dom';
@@ -14,7 +14,8 @@ const Header: FC = () => {
     const { teacher } = useContext(GlobalData)
     const navigate = useNavigate();
     const pathParts = location.pathname.split('/').filter(Boolean);
-
+    const defineFullName = `${teacher.teacher?.LastName} ${teacher.teacher?.FirstName}`
+    const [nameBlockText, setNameBlockText] = useState(defineFullName)
     useEffect(() => {
         if (!teacher.isAuth) navigate('/')
     }, [])
@@ -27,7 +28,7 @@ const Header: FC = () => {
                         className={styles.navigatePoint}
                     >
                         <Link to={'/' + urlTitle} className={
-                            pathParts.includes(urlTitle) 
+                            pathParts.includes(urlTitle)
                                 ? styles.nonActive
                                 : styles.active
                         }
@@ -37,7 +38,16 @@ const Header: FC = () => {
                     </div>
                 })}
             </nav>
-            <div>{teacher.teacher?.LastName} {teacher.teacher?.FirstName}</div>
+            <div
+                onMouseEnter={() => setNameBlockText('Выход')}
+                onMouseLeave={() => setNameBlockText(defineFullName)}
+                onClick={()=>{
+                    teacher.logout();
+                    navigate('/login')
+                }}
+            >
+                {nameBlockText}
+            </div>
         </header>
     )
 }
