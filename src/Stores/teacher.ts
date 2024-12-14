@@ -37,7 +37,9 @@ export default class Teacher {
         ).catch(
             () => false
         )
-
     }
 
+    async getActivitiesForTeacherWithoutThemes(){
+        Server.getActivitiesForTeacherWithoutThemes();
+    }
 }

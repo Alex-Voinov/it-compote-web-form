@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavigationMenu from "./Pages/NavigationMenu/NavigationMenu";
 import Comments from "./Pages/Comments/Comments";
-import CalculateSelary from "./Pages/Comments/CalculateSelary/CalculateSelary";
-import Timetable from "./Pages/Comments/Timetable/Timetable";
+import CalculateSelary from "./Pages/CalculateSelary/CalculateSelary";
+import Timetable from "./Pages/Timetable/Timetable";
 import StartPage from "./Pages/StartPage/StartPage";
 
 

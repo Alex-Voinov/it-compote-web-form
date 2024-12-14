@@ -1,0 +1,36 @@
+.wrapper{
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    height: 4vw;
+    background-color: #34393D;
+    justify-content: space-between;
+    padding-left: 5vw;
+    padding-right: 5vw;
+    color: #969FA1;
+
+    &>nav{
+        display: flex;
+        align-items: center;
+        height: 100%;
+        &>.navigatePoint{
+            width: 12vw;
+            height: 100%;
+            display: flex;
+            margin-left: 2vw;
+            align-items: center;
+            justify-content: center;
+            & > a{
+                text-align: center;
+                &.active{
+                    color: #E8EDEE;
+                    cursor: pointer;
+                }
+                &.nonActive{
+                    color: #b5bec0;
+                    cursor: default;
+                }
+            }
+        }
+    }
+}

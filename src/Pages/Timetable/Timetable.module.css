@@ -1,18 +1,13 @@
 .wrapper{
     width: 100vw;
     height: 100vh;
-    & > main{
+    &>main{
         width: 100%;
         height: calc(100vh - 4vw);
         display: flex;
+        align-items: center;
+        justify-content: center;
         color: #b5bec0;
+        font-style: 2vw;
     }
-}
-
-.activitiesList{
-    width: 40%;
-    height: 100%;
-    border-right: 1px solid #b5bec0;
-    padding: 2vw;
-    overflow: auto;
 }
