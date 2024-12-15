@@ -22,7 +22,7 @@ const StartPage: FC = () => {
             <div className={styles.wrapperLoader}>
                 <Loader />
             </div>
-            <h2>Верификация</h2>
+            <h2>Верификация...</h2>
         </section>
     )
 }

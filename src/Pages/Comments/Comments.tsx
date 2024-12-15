@@ -59,6 +59,9 @@ const Comments: FC = () => {
     const surveyAnswers = Object.keys(surveyFields).map(() => useState<number | null>(null))
     const availableNextStep = selectedTheme && surveyAnswers[0][0] && surveyAnswers[1][0]
     const dropdownRef = useRef<HTMLDivElement | null>(null);
+    const [positiveAspects, setPositiveAspects] = useState('');
+    const [growthPoints, setGrowthPoints] = useState('');
+    const [generalQuestions, setGeneralQuestions] = useState('');
 
     // Сброс выбранный рейтов
     const resetRate = () => {
@@ -92,8 +95,9 @@ const Comments: FC = () => {
             document.removeEventListener("mousedown", handleOutsideClick);
         };
     }, []);
-
-    const activities = (teacher.activitiesWithoutthemes === null ? [] : teacher.activitiesWithoutthemes) as IActivity[]
+    const allActivities = (teacher.activitiesWithoutthemes === null ? [] : teacher.activitiesWithoutthemes) as IActivity[] // Все найденные активности, включая условные планерки
+    const activities = allActivities.filter(activity=> Object.keys(disciplanaryTopics.allTopic).includes(activity.Discipline)) // Учебные активности, по дисциплинам из гугл таблицы
+    const studentsByActivity = (selectedActivity?.Students && Object.keys(selectedActivity?.Students).length > 0) ? selectedActivity.Students : null
     return (
         <section className={styles.wrapper}>
             <Header />
@@ -138,20 +142,21 @@ const Comments: FC = () => {
                             )}
                 </section>
                 <section className={styles.fillingWindow}>
-                    {selectedActivity && <><nav>
-                        {selectedActivity.Days.map(day => <div
-                            key={day.Date}
-                            className={`${styles.oneDay} ${day === selectedDay && styles.selected}`}
-                            onClick={() => {
-                                setSelectedDay(day);
-                                setSelectedTheme(null);
-                                resetRate()
-                            }}
-                        >
-                            {formatDate(day.Date)}
-                        </div>
-                        )}
-                    </nav>
+                    {selectedActivity && <>
+                        <nav>
+                            {selectedActivity.Days.map(day => <div
+                                key={day.Date}
+                                className={`${styles.oneDay} ${day === selectedDay && styles.selected}`}
+                                onClick={() => {
+                                    setSelectedDay(day);
+                                    setSelectedTheme(null);
+                                    resetRate()
+                                }}
+                            >
+                                {formatDate(day.Date)}
+                            </div>
+                            )}
+                        </nav>
                         {selectedDay && (activeComposition === Composition.General ? <section className={styles.openLesson}>
                             <div className={styles.row}>
                                 <h1>Выберите тему урока</h1>
@@ -187,7 +192,44 @@ const Comments: FC = () => {
                                 </button>
                             </div>}
                         </section> : <>
-                            поля коментариев
+                            <div className={styles.commentsBlock}>
+                                <div className={styles.mainComments}>
+                                    <h1>Общие комментарии</h1>
+                                    <textarea
+                                        placeholder='Что было позитивного на занятии?'
+                                        onChange={e => setPositiveAspects(e.target.value)}
+                                        value={positiveAspects} />
+                                    <textarea
+                                        placeholder='Какие точки роста видишь у себя в опыте, знаниях?'
+                                        onChange={e => setGrowthPoints(e.target.value)}
+                                        value={growthPoints} />
+                                    <textarea
+                                        placeholder='Общие вопросы к другим подразделениям школы'
+                                        onChange={e => setGeneralQuestions(e.target.value)}
+                                        value={generalQuestions}
+                                    />
+                                </div>
+                                {studentsByActivity && <div className={styles.personalComments}>
+                                    <h1>Индивидуальные комментарии</h1>
+                                    {Object.entries(studentsByActivity).map(studentData => {
+                                        const [id, fullName] = studentData;
+                                        return <div key={id} className={styles.studentCard}>
+                                            {fullName}
+                                        </div>
+                                    })}
+                                </div>}
+                            </div>
+                            <div className={styles.buttonBlockSecondComp}>
+                                <button onClick={e => {
+                                    e.preventDefault();
+                                    setActiveComposition(Composition.General)
+                                }}>Назад
+                                </button>
+                                <button onClick={e => {
+                                    e.preventDefault();
+                                }}>Сохранить
+                                </button>
+                            </div>
                         </>)
                         }
                     </>}
