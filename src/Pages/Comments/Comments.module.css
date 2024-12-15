@@ -124,14 +124,14 @@
         padding-top: 0.8vw;
         overflow-x: auto;
 
-        &::-webkit-scrollbar { 
-            height: 0.4vw; 
-            background: #34393D; 
+        &::-webkit-scrollbar {
+            height: 0.4vw;
+            background: #34393D;
         }
-        
+
         /* Оформляем ползунок */
-        &::-webkit-scrollbar-thumb { 
-            background: #b5bec0; 
+        &::-webkit-scrollbar-thumb {
+            background: #b5bec0;
         }
 
         &>.oneDay {
@@ -157,6 +157,92 @@
                 background-color: #b3b8bd;
                 color: #101113;
             }
+        }
+    }
+}
+
+.openLesson {
+    padding: 2vw 1vw 0 2vw;
+
+    &>.row {
+        width: 90%;
+        height: 4vw;
+        margin-bottom: 1vw;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        overflow: visible;
+
+        &>h1 {
+            font-size: 1vw;
+            font-weight: 300;
+        }
+    }
+}
+
+.dropDawn {
+    overflow: visible;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1vw;
+    text-align: center;
+    width: 30vw;
+    height: 2vw;
+    background-color: #4c5155;
+
+    &>.pointList {
+        background-color: #4c5155;
+        position: absolute;
+        top: calc(2vw + 2px);
+        left: 0;
+        max-height: 10vw;
+        overflow: auto;
+        width: 100%;
+
+        &>div {
+            width: 100%;
+            height: 2vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 0.8vw;
+            border-bottom: 1px solid #101113;
+        }
+
+        &::-webkit-scrollbar {
+            width: 0.4vw;
+            height: 0.46296vh;
+            background-color: #34393D;
+
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #b5bec0 !important;
+        }
+
+
+        &::-webkit-scrollbar-button:vertical:start:decrement {
+            background-color: #b5bec0 !important;
+            display: none
+        }
+
+        &::-webkit-scrollbar-button:vertical:end:increment {
+            background-color: #b5bec0 !important;
+            display: none
+        }
+
+        &::-webkit-scrollbar-button:horizontal:start:decrement {
+            background-color: #b5bec0;
+            display: none
+        }
+
+        &::-webkit-scrollbar-button:horizontal:end:increment {
+            background-color: #b5bec0;
+            display: none
         }
     }
 }

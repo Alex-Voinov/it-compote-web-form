@@ -35,6 +35,9 @@ export default class Server {
             }
         )
     }
+    static getTopicsAcrossDisciplines(): Promise<AxiosResponse<{ [key: string]: string[] }>> {
+        return $api.get<{ [key: string]: string[] }>('/get-topics-across-disciplines')
+    }
 
     static getActivitiesForTeacherWithoutThemes(
         teacherId: string
