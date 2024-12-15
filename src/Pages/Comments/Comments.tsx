@@ -3,12 +3,16 @@ import Header from '../../Components/UI/Header/Header'
 import styles from './Comments.module.css'
 import { observer } from 'mobx-react-lite'
 import { GlobalData } from '../../main'
-import IActivity from '../../models/Activity'
+import IActivity, { IDay } from '../../models/Activity'
 import Loader from '../../Components/Decoration/Loader/Loader'
+import formatDate from '../../utilities/formatedTime'
+
 
 const Comments: FC = () => {
     const { teacher } = useContext(GlobalData)
     const [isLoading, setLoading] = useState(false)
+    const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null);
+    const [selectedDay, setSelectedDay] = useState<IDay | null>(null);
     useEffect(() => {
         if (teacher.activitiesWithoutthemes === null && teacher.teacher) {
             setLoading(true);
@@ -46,8 +50,12 @@ const Comments: FC = () => {
                                 </div>
                                 : activities.map(
                                     activity => <div
-                                        className={styles.findedActivities}
+                                        className={`${styles.findedActivities}  ${activity.Id === selectedActivity?.Id && styles.selected}`}
                                         key={activity.Id}
+                                        onClick={() => {
+                                            setSelectedActivity(activity);
+                                            setSelectedDay(null);
+                                        }}
                                     >
                                         <div>{activity.Name}: {activity.Type}</div>
                                         <div>{activity.Discipline}</div>
@@ -55,7 +63,18 @@ const Comments: FC = () => {
                                 )
                             )}
                 </section>
-                <section></section>
+                <section className={styles.fillingWindow}>
+                    {selectedActivity && <nav>
+                        {selectedActivity.Days.map(day => <div
+                            key={day.Date}
+                            className={`${styles.oneDay} ${day===selectedDay && styles.selected}`}
+                            onClick={() => { setSelectedDay(day) }}
+                        >
+                            {formatDate(day.Date)}
+                        </div>
+                        )}
+                    </nav>}
+                </section>
             </main>
         </section>
     )

@@ -1,7 +1,8 @@
-.wrapper{
+.wrapper {
     width: 100vw;
     height: 100vh;
-    & > main{
+
+    &>main {
         width: 100%;
         height: calc(100vh - 4vw);
         display: flex;
@@ -9,50 +10,47 @@
     }
 }
 
-.activitiesList{
+.activitiesList {
     width: 40%;
     height: 100%;
     border-right: 1px solid #34393D;
     padding: 2vw;
     overflow: auto;
+
     &::-webkit-scrollbar {
         width: 0.4vw;
         height: 0.46296vh;
         background-color: #34393D;
-    
+
     }
-    
+
     &::-webkit-scrollbar-thumb {
         background-color: #b5bec0 !important;
-        border-radius: min(0.15625vw, 0.27778vh) min(0.26042vw, 0.46296vh) min(0.26042vw, 0.46296vh) min(0.15625vw, 0.27778vh) !important
     }
-    
-    &::-webkit-scrollbar-thumb:hover {
-        border-radius: 1em !important
-    }
-    
+
+
     &::-webkit-scrollbar-button:vertical:start:decrement {
         background-color: #b5bec0 !important;
         display: none
     }
-    
+
     &::-webkit-scrollbar-button:vertical:end:increment {
         background-color: #b5bec0 !important;
         display: none
     }
-    
+
     &::-webkit-scrollbar-button:horizontal:start:decrement {
         background-color: #b5bec0;
         display: none
     }
-    
+
     &::-webkit-scrollbar-button:horizontal:end:increment {
         background-color: #b5bec0;
         display: none
     }
 }
 
-.findedActivities{
+.findedActivities {
     width: 98%;
     height: 4vw;
     background-color: #34393D;
@@ -65,13 +63,24 @@
     flex-direction: column;
     padding: 1vw;
     font-size: 0.8vw;
-    &>div{
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+    &:hover {
+        background-color: #4c5155;
+    }
+
+    &.selected {
+        background-color: #b3b8bd;
+        color: #101113;
+    }
+
+    &>div {
         width: 100%;
         height: 40%;
     }
 }
 
-.notFindedActivities{
+.notFindedActivities {
     border: 1px solid #b5bec0;
     margin-top: 1vw;
     height: calc(100vh - 12vw);
@@ -82,14 +91,15 @@
     justify-content: center;
     text-align: center;
     font-size: 1vw;
-    &>button{
+
+    &>button {
         width: 8vw;
         height: 2vw;
         margin-top: 2vw;
     }
 }
 
-.wrapperLoader{
+.wrapperLoader {
     height: calc(100vh - 12vw);
     width: 100%;
     display: flex;
@@ -97,7 +107,56 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    &>img{
-       width: 20vw;
+
+    &>img {
+        width: 20vw;
+    }
+}
+
+.fillingWindow {
+    width: 60vw;
+
+    &>nav {
+        margin-top: 1vw;
+        width: 60vw;
+        height: 5vw;
+        display: flex;
+        padding-top: 0.8vw;
+        overflow-x: auto;
+
+        &::-webkit-scrollbar { 
+            height: 0.4vw; 
+            background: #34393D; 
+        }
+        
+        /* Оформляем ползунок */
+        &::-webkit-scrollbar-thumb { 
+            background: #b5bec0; 
+        }
+
+        &>.oneDay {
+            background-color: #34393D;
+            height: 2vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 1vw;
+            padding-right: 1vw;
+            border-radius: 0.5vw;
+            margin-left: 2vw;
+            min-width: 8vw;
+            font-size: 0.8vw;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+            &:hover {
+                background-color: #4c5155;
+            }
+
+            &.selected {
+                background-color: #b3b8bd;
+                color: #101113;
+            }
+        }
     }
 }
