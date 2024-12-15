@@ -7,16 +7,66 @@ import IActivity, { IDay } from '../../models/Activity'
 import Loader from '../../Components/Decoration/Loader/Loader'
 import formatDate from '../../utilities/formatedTime'
 
+const surveyFields = {
+    completeness: 'Насколько  закончена тема?',
+    satisfaction: 'Удовлетворенность уроком',
+    Feelings: 'Как я себя чувствовал?',
+    FeelingsStudent: 'Как себя чувствовали студенты?',
+
+}
+
+interface IRatingScale {
+    title: string,
+    state: [number | null, React.Dispatch<React.SetStateAction<number | null>>]
+}
+
+const RatingScale: FC<IRatingScale> = ({ title, state }) => {
+    const [valueRating, setValueRating] = state;
+    return (
+        <div className={styles.row}>
+            <h1>{title}</h1>
+            <div className={styles.buttonBlock}>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
+                    value => <button
+                        key={`${title}-${value}`}
+                        className={`${styles.rateButton} ${valueRating === value && styles.active}`}
+                        onClick={e => {
+                            e.preventDefault();
+                            setValueRating(value)
+                        }}
+                    >
+                        {value}
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+};
+
+enum Composition {
+    General,
+    Comments
+}
 
 const Comments: FC = () => {
     const { teacher, disciplanaryTopics } = useContext(GlobalData)
     const [isLoading, setLoading] = useState(false)
-    const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null);
-    const [selectedDay, setSelectedDay] = useState<IDay | null>(null);
+    const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null); // Категории слева
+    const [selectedDay, setSelectedDay] = useState<IDay | null>(null); // Дни сверху
     const [selectedTheme, setSelectedTheme] = useState<string | null>(null)
     const [openWindowThemes, setOpenWindowThemes] = useState(false);
-    
+    const [activeComposition, setActiveComposition] = useState(Composition.General);
+    const surveyAnswers = Object.keys(surveyFields).map(() => useState<number | null>(null))
+    const availableNextStep = selectedTheme && surveyAnswers[0][0] && surveyAnswers[1][0]
     const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+    // Сброс выбранный рейтов
+    const resetRate = () => {
+        for (let surveyAnswer of surveyAnswers) {
+            surveyAnswer[1](null);
+            setActiveComposition(Composition.General)
+        }
+    }
 
     useEffect(() => {
         if (teacher.activitiesWithoutthemes === null && teacher.teacher) {
@@ -78,6 +128,7 @@ const Comments: FC = () => {
                                             setSelectedActivity(activity);
                                             setSelectedDay(null);
                                             setSelectedTheme(null);
+                                            resetRate()
                                         }}
                                     >
                                         <div>{activity.Name}: {activity.Type}</div>
@@ -94,16 +145,17 @@ const Comments: FC = () => {
                             onClick={() => {
                                 setSelectedDay(day);
                                 setSelectedTheme(null);
+                                resetRate()
                             }}
                         >
                             {formatDate(day.Date)}
                         </div>
                         )}
                     </nav>
-                        {selectedDay && <section className={styles.openLesson}>
+                        {selectedDay && (activeComposition === Composition.General ? <section className={styles.openLesson}>
                             <div className={styles.row}>
                                 <h1>Выберите тему урока</h1>
-                                <div className={styles.dropDawn} onClick={()=>setOpenWindowThemes(true)}>
+                                <div className={styles.dropDawn} onClick={() => setOpenWindowThemes(true)}>
                                     <p>{selectedTheme ? selectedTheme : '–'}</p>
                                     {openWindowThemes && <div className={styles.pointList} ref={dropdownRef}>
                                         {disciplanaryTopics.get(selectedActivity.Discipline).map(theme => {
@@ -123,7 +175,21 @@ const Comments: FC = () => {
                                     </div>}
                                 </div>
                             </div>
-                        </section>}
+                            {Object.values(surveyFields).map((title, number) => {
+                                return <RatingScale title={title} state={surveyAnswers[number]} key={title} />
+                            })}
+                            {availableNextStep && <div className={styles.nextStepWrapper}>
+                                <button onClick={e => {
+                                    e.preventDefault();
+                                    setActiveComposition(Composition.Comments)
+                                }}>
+                                    Далее
+                                </button>
+                            </div>}
+                        </section> : <>
+                            поля коментариев
+                        </>)
+                        }
                     </>}
                 </section>
             </main>

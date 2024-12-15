@@ -194,7 +194,7 @@
     background-color: #4c5155;
 
     &>.pointList {
-        background-color: #4c5155;
+
         position: absolute;
         top: calc(2vw + 2px);
         left: 0;
@@ -211,6 +211,13 @@
             text-align: center;
             font-size: 0.8vw;
             border-bottom: 1px solid #101113;
+            background-color: #4c5155;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+            &:hover {
+                background-color: #71787e;
+                color: aliceblue;
+            }
         }
 
         &::-webkit-scrollbar {
@@ -243,6 +250,68 @@
         &::-webkit-scrollbar-button:horizontal:end:increment {
             background-color: #b5bec0;
             display: none
+        }
+    }
+}
+
+.buttonBlock {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1vw;
+    width: 30vw;
+    height: 2vw;
+
+    &>.rateButton {
+        width: 2vw;
+        height: 2vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        cursor: pointer;
+        font-weight: 400;
+        background-color: #4c5155;
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        border: none;
+        border-radius: 0.2vw;
+        color: #b5bec0;
+
+        &:hover {
+            background-color: #71787e;
+            color: aliceblue;
+        }
+
+        &.active {
+            background-color: #b3b8bd;
+            color: #101113;
+            cursor: default !important;
+        }
+    }
+}
+
+.nextStepWrapper {
+    width: 90%;
+    height: 3vw;
+    margin-top: 4vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &>button {
+        height: 100%;
+        width: 12vw;
+        cursor: pointer;
+        font-size: 1vw;
+        background-color: #4c5155;
+        color: #b5bec0;
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        border: none;
+        border-radius: 0.2vw;
+
+        &:hover {
+            background-color: #71787e;
+            color: aliceblue;
         }
     }
 }
