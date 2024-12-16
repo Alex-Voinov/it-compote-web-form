@@ -33,7 +33,7 @@ const NavigationMenu: FC = () => {
                         Ок
                     </button>
                 </>
-                    : <>
+                    : <form>
                         <input
                             type="email"
                             placeholder='HH email'
@@ -74,7 +74,7 @@ const NavigationMenu: FC = () => {
                             }}>
                             Войти
                         </button>
-                    </>)
+                    </form>)
             }
         </section>
     )

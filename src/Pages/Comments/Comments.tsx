@@ -62,12 +62,14 @@ const Comments: FC = () => {
     const [positiveAspects, setPositiveAspects] = useState('');
     const [growthPoints, setGrowthPoints] = useState('');
     const [generalQuestions, setGeneralQuestions] = useState('');
-
+    const [selectedStudentForComment, setSelectedStudentForComment] = useState<null | string>(null);
+    const [individulComments, setIndividulComments] = useState<{ [key: string]: string }>({})
     // Сброс выбранный рейтов
     const resetRate = () => {
         for (let surveyAnswer of surveyAnswers) {
             surveyAnswer[1](null);
             setActiveComposition(Composition.General)
+            setIndividulComments({})
         }
     }
 
@@ -96,7 +98,7 @@ const Comments: FC = () => {
         };
     }, []);
     const allActivities = (teacher.activitiesWithoutthemes === null ? [] : teacher.activitiesWithoutthemes) as IActivity[] // Все найденные активности, включая условные планерки
-    const activities = allActivities.filter(activity=> Object.keys(disciplanaryTopics.allTopic).includes(activity.Discipline)) // Учебные активности, по дисциплинам из гугл таблицы
+    const activities = allActivities.filter(activity => Object.keys(disciplanaryTopics.allTopic).includes(activity.Discipline)) // Учебные активности, по дисциплинам из гугл таблицы
     const studentsByActivity = (selectedActivity?.Students && Object.keys(selectedActivity?.Students).length > 0) ? selectedActivity.Students : null
     return (
         <section className={styles.wrapper}>
@@ -194,42 +196,77 @@ const Comments: FC = () => {
                         </section> : <>
                             <div className={styles.commentsBlock}>
                                 <div className={styles.mainComments}>
-                                    <h1>Общие комментарии</h1>
-                                    <textarea
-                                        placeholder='Что было позитивного на занятии?'
-                                        onChange={e => setPositiveAspects(e.target.value)}
-                                        value={positiveAspects} />
-                                    <textarea
-                                        placeholder='Какие точки роста видишь у себя в опыте, знаниях?'
-                                        onChange={e => setGrowthPoints(e.target.value)}
-                                        value={growthPoints} />
-                                    <textarea
-                                        placeholder='Общие вопросы к другим подразделениям школы'
-                                        onChange={e => setGeneralQuestions(e.target.value)}
-                                        value={generalQuestions}
-                                    />
+                                    <h1>
+                                        {selectedStudentForComment
+                                            ? studentsByActivity![selectedStudentForComment]
+                                            : 'Общие комментарии'}
+                                    </h1>
+                                    {selectedStudentForComment
+                                        ? <><textarea
+                                            placeholder='Индивидуальный комментарий для студента'
+                                            className={styles.individualTextarea}
+                                            onChange={e => {
+                                                setIndividulComments({ ...individulComments, [selectedStudentForComment]: e.target.value })
+                                            }}
+                                            value={selectedStudentForComment in individulComments ? individulComments[selectedStudentForComment] : ''}
+                                        />
+                                            <button className={styles.saveComments}
+                                                onClick={
+                                                    e => {
+                                                        e.preventDefault();
+                                                        setSelectedStudentForComment(null);
+                                                    }}
+                                            >
+                                                Сохранить все индивидуальные комментарии
+                                            </button>
+                                        </>
+                                        : <>
+                                            <textarea
+                                                placeholder='Что было позитивного на занятии?'
+                                                onChange={e => setPositiveAspects(e.target.value)}
+                                                value={positiveAspects}
+                                            />
+                                            <textarea
+                                                placeholder='Какие точки роста видишь у себя в опыте, знаниях?'
+                                                onChange={e => setGrowthPoints(e.target.value)}
+                                                value={growthPoints}
+                                            />
+                                            <textarea
+                                                placeholder='Общие вопросы к другим подразделениям школы'
+                                                onChange={e => setGeneralQuestions(e.target.value)}
+                                                value={generalQuestions}
+                                            />
+                                        </>}
                                 </div>
                                 {studentsByActivity && <div className={styles.personalComments}>
                                     <h1>Индивидуальные комментарии</h1>
                                     {Object.entries(studentsByActivity).map(studentData => {
                                         const [id, fullName] = studentData;
-                                        return <div key={id} className={styles.studentCard}>
+                                        return <div
+                                            key={id}
+                                            className={`${styles.studentCard} ${id === selectedStudentForComment && styles.active}`}
+                                            onClick={() => {
+                                                setSelectedStudentForComment(id)
+                                            }}
+                                        >
                                             {fullName}
                                         </div>
                                     })}
                                 </div>}
                             </div>
-                            <div className={styles.buttonBlockSecondComp}>
+                            {!selectedStudentForComment && <div className={styles.buttonBlockSecondComp}>
                                 <button onClick={e => {
                                     e.preventDefault();
                                     setActiveComposition(Composition.General)
-                                }}>Назад
+                                }}>
+                                    Назад
                                 </button>
                                 <button onClick={e => {
                                     e.preventDefault();
-                                }}>Сохранить
+                                }}>
+                                    Сохранить
                                 </button>
-                            </div>
+                            </div>}
                         </>)
                         }
                     </>}

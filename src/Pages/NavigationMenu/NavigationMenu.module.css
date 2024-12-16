@@ -7,72 +7,82 @@
     justify-content: center;
     flex-direction: column;
 
-    &>h1{
-        color: #E8EDEE;
-        font-size: 2vw;
-        text-align: center;
-    }
-
-    &>p{
-        color: #E8EDEE;
-        font-size: 1.6vw;
-        text-align: center;
-        margin-top: 1vw;
-        margin-bottom: 1vw;
-    }
-
-    &>input {
-        color: #E8EDEE;
-        cursor: text;
+    &>form {
+        width: 100vw;
+        height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        text-align: center;
-        border: none;
-        border-bottom: #969FA1 1px solid;
-        width: 20vw;
-        height: 8vh;
-        background: none;
-        font-size: 2vw;
-        font-weight: 300;
-        margin-bottom: 2vw;
+        flex-direction: column;
 
-        &:focus {
-            outline: none;
+        &>h1 {
+            color: #E8EDEE;
+            font-size: 2vw;
+            text-align: center;
         }
 
-
-        &::placeholder {
-            color: #969FA1;
-        }
-    }
-
-    &>button {
-        margin-top: 1vw;
-        width: 9vw;
-        height: 3vw;
-        background-color: transparent;
-        color: #E8EDEE;
-        font-size: 1vw;
-        border: 1px solid #EA3554;
-        border-radius: 2vw;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-
-        &:hover {
-            background-color: #EA3554;
+        &>p {
+            color: #E8EDEE;
+            font-size: 1.6vw;
+            text-align: center;
+            margin-top: 1vw;
+            margin-bottom: 1vw;
         }
 
-        &.hidden:hover {
+        &>input {
+            color: #E8EDEE;
+            cursor: text;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: none;
+            border-bottom: #969FA1 1px solid;
+            width: 20vw;
+            height: 8vh;
+            background: none;
+            font-size: 2vw;
+            font-weight: 300;
+            margin-bottom: 2vw;
+
+            &:focus {
+                outline: none;
+            }
+
+
+            &::placeholder {
+                color: #969FA1;
+            }
+        }
+
+        &>button {
+            margin-top: 1vw;
+            width: 9vw;
+            height: 3vw;
             background-color: transparent;
-            color: transparent;
-            border-color: transparent;
-            cursor: not-allowed;
+            color: #E8EDEE;
+            font-size: 1vw;
+            border: 1px solid #EA3554;
+            border-radius: 2vw;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+
+            &:hover {
+                background-color: #EA3554;
+            }
+
+            &.hidden:hover {
+                background-color: transparent;
+                color: transparent;
+                border-color: transparent;
+                cursor: not-allowed;
+            }
         }
     }
+
 }
 
-.wrapperLoader{
+.wrapperLoader {
     width: 20vw;
     height: 20vw;
 }
