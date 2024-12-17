@@ -7,7 +7,7 @@ import IActivity, { IDay } from '../../models/Activity'
 import Loader from '../../Components/Decoration/Loader/Loader'
 import formatDate from '../../utilities/formatedTime'
 
-const surveyFields = {
+export const surveyFields = {
     completeness: 'Насколько  закончена тема?',
     satisfaction: 'Удовлетворенность уроком',
     Feelings: 'Как я себя чувствовал?',
@@ -68,9 +68,13 @@ const Comments: FC = () => {
     const resetRate = () => {
         for (let surveyAnswer of surveyAnswers) {
             surveyAnswer[1](null);
-            setActiveComposition(Composition.General)
-            setIndividulComments({})
         }
+        setActiveComposition(Composition.General)
+        setIndividulComments({})
+        setPositiveAspects('')
+        setGrowthPoints('')
+        setGeneralQuestions('')
+        setSelectedTheme(null)
     }
 
     useEffect(() => {
@@ -263,6 +267,22 @@ const Comments: FC = () => {
                                 </button>
                                 <button onClick={e => {
                                     e.preventDefault();
+                                    teacher.sendActivityData(
+                                        selectedActivity,
+                                        selectedDay,
+                                        selectedTheme!,
+                                        individulComments,
+                                        surveyAnswers.map(state => state[0]),
+                                        {
+                                            positiveAspects,
+                                            growthPoints,
+                                            generalQuestions
+                                        }
+                                    ).then(() => {
+                                        resetRate()
+                                        setSelectedDay(null);
+                                    });
+
                                 }}>
                                     Сохранить
                                 </button>

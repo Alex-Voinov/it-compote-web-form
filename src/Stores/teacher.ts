@@ -1,7 +1,8 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import ITeacher from "../models/Teacher";
 import Server from "../Services/Server";
-import IActivity from "../models/Activity";
+import IActivity, { IDay } from "../models/Activity";
+import { surveyFields } from "../Pages/Comments/Comments";
 
 export default class Teacher {
 
@@ -67,4 +68,32 @@ export default class Teacher {
             this.activitiesWithoutthemes = findActivities ? findActivities : [];
         });
     }
+
+    async sendActivityData(
+        activity: IActivity,
+        date: IDay,
+        theme: string,
+        individulComments: { [key: string]: string },
+        rates: (number | null)[],
+        generalComments: { [key: string]: string },
+    ) {
+        const ratesWithField: { [key: string]: number | null } = {}
+        rates.forEach((rateValue, number) => { // Переделать, добавить сброс полей
+            ratesWithField[Object.keys(surveyFields)[number]] = rateValue
+        })
+        const formatedTeacher = {
+            ClientId: this.teacher!.Id,
+            FullName: `${this.teacher?.LastName} ${this.teacher?.FirstName}`
+        }
+        const response = await Server.sendActivityData(
+            activity.Id,
+            date.Date,
+            theme,
+            individulComments,
+            generalComments,
+            ratesWithField,
+            formatedTeacher
+        );
+    }
+
 }

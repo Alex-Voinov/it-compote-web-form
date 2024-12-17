@@ -51,4 +51,28 @@ export default class Server {
             }
         )
     }
+
+    static sendActivityData(
+        activityId: number,
+        date: string,
+        theme: string,
+        individulComments: { [key: string]: string },
+        generalComments: { [key: string]: string },
+        rates: { [key: string]: number | null },
+        lecturer: { [key: string]: number | string }
+    ): Promise<AxiosResponse> {
+        return $api.get('/fill-activity-data',
+            {
+                params: {
+                    activityId,
+                    date,
+                    theme,
+                    individulComments,
+                    generalComments,
+                    rates,
+                    lecturer
+                }
+            }
+        )
+    }
 }
