@@ -1,15 +1,15 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import ITeacher from "../models/Teacher";
 import Server from "../Services/Server";
-import IActivity, { IDay } from "../models/Activity";
 import { surveyFields } from "../Pages/Comments/Comments";
+import IActivityResponse from "../models/ActivityResponse";
 
 export default class Teacher {
 
     teacher: ITeacher | null = null
     teacherCode: string = '';
     isAuth: boolean = false;
-    activitiesWithoutthemes: null | IActivity[] = null
+    activitiesWithoutthemes: null | IActivityResponse = null
 
     constructor() {
         makeAutoObservable(this)
@@ -65,17 +65,18 @@ export default class Teacher {
         const serverResponse = await Server.getActivitiesForTeacherWithoutThemes(String(this.teacher?.Id));
         const findActivities = serverResponse.data
         runInAction(() => {
-            this.activitiesWithoutthemes = findActivities ? findActivities : [];
+            this.activitiesWithoutthemes = findActivities ? findActivities : null;
         });
     }
 
     async sendActivityData(
-        activity: IActivity,
-        date: IDay,
+        activityId: string,
+        date: string,
         theme: string,
         individulComments: { [key: string]: string },
         rates: (number | null)[],
         generalComments: { [key: string]: string },
+        attendance: {[key: string]: boolean}
     ) {
         const ratesWithField: { [key: string]: number | null } = {}
         rates.forEach((rateValue, number) => { // Переделать, добавить сброс полей
@@ -85,14 +86,15 @@ export default class Teacher {
             ClientId: this.teacher!.Id,
             FullName: `${this.teacher?.LastName} ${this.teacher?.FirstName}`
         }
-        const response = await Server.sendActivityData(
-            activity.Id,
-            date.Date,
+        await Server.sendActivityData(
+            activityId,
+            date,
             theme,
             individulComments,
             generalComments,
             ratesWithField,
-            formatedTeacher
+            formatedTeacher,
+            attendance
         );
     }
 

@@ -1,8 +1,9 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import ITeacher from '../models/Teacher';
-import IActivity from '../models/Activity';
+import IActivityResponse from '../models/ActivityResponse';
 
-const API_URL = `http://localhost:80/api`;
+//const API_URL = `http://compot-school.ru/api`; // для проды
+const API_URL = `http://localhost/api`; // для локалки
 
 const $api = axios.create({
     withCredentials: true,
@@ -41,8 +42,8 @@ export default class Server {
 
     static getActivitiesForTeacherWithoutThemes(
         teacherId: string
-    ): Promise<AxiosResponse<IActivity[]>> {
-        return $api.get<IActivity[]>(
+    ): Promise<AxiosResponse<IActivityResponse>> {
+        return $api.get<IActivityResponse>(
             '/get-activities-for-teacher-without-themes',
             {
                 params: {
@@ -53,13 +54,14 @@ export default class Server {
     }
 
     static sendActivityData(
-        activityId: number,
+        activityId: string,
         date: string,
         theme: string,
         individulComments: { [key: string]: string },
         generalComments: { [key: string]: string },
         rates: { [key: string]: number | null },
-        lecturer: { [key: string]: number | string }
+        lecturer: { [key: string]: number | string },
+        attendance: {[key: string]: boolean}
     ): Promise<AxiosResponse> {
         return $api.get('/fill-activity-data',
             {
@@ -70,7 +72,8 @@ export default class Server {
                     individulComments,
                     generalComments,
                     rates,
-                    lecturer
+                    lecturer,
+                    attendance
                 }
             }
         )

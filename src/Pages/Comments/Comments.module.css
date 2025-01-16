@@ -374,11 +374,12 @@
                 outline: none;
             }
 
-            &.individualTextarea{
+            &.individualTextarea {
                 height: 15vw;
             }
         }
-        &>.saveComments{
+
+        &>.saveComments {
             height: 3vw;
             width: 24vw;
             cursor: pointer;
@@ -390,10 +391,11 @@
             border-radius: 0.2vw;
             margin-right: 2vw;
             margin-left: 8vw;
+
             &:hover {
                 background-color: #71787e;
                 color: aliceblue;
-            }  
+            }
         }
     }
 
@@ -408,19 +410,46 @@
         }
 
         &>.studentCard {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             width: 15vw;
             height: 2vw;
             border-radius: 0.5vw;
             margin-bottom: 1vw;
             background-color: #4c5155;
-            text-align: center;
+            padding-left: 1vw;
+            padding-right: 1vw;
             color: #b5bec0;
             cursor: pointer;
-            font-size: 0.8vw;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+            &>.studentName {
+                width: 12vw;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                font-size: 0.7vw;
+            }
+
+            &>.attendanceMark {
+                width: 1vw;
+                height: 1vw;
+                background-color: rgb(0, 0, 0);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                &>div{
+                    cursor: pointer;
+                    width: 0.8vw;
+                    height: 0.8vw;
+                    background-color: aquamarine;
+                }
+            }
 
             &:hover {
                 background-color: #71787e;

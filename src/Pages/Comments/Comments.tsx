@@ -1,14 +1,15 @@
-import { FC, useContext, useEffect, useRef, useState } from 'react'
+import { FC, useContext, useEffect, useRef, useState, Dispatch, SetStateAction } from 'react'
 import Header from '../../Components/UI/Header/Header'
 import styles from './Comments.module.css'
 import { observer } from 'mobx-react-lite'
 import { GlobalData } from '../../main'
-import IActivity, { IDay } from '../../models/Activity'
+import IIndividualActivity from '../../models/IndividualActivity'
 import Loader from '../../Components/Decoration/Loader/Loader'
 import formatDate from '../../utilities/formatedTime'
+import IGroupActivity from '../../models/GroupActivity'
+
 
 export const surveyFields = {
-    completeness: 'Насколько  закончена тема?',
     satisfaction: 'Удовлетворенность уроком',
     Feelings: 'Как я себя чувствовал?',
     FeelingsStudent: 'Как себя чувствовали студенты?',
@@ -17,7 +18,7 @@ export const surveyFields = {
 
 interface IRatingScale {
     title: string,
-    state: [number | null, React.Dispatch<React.SetStateAction<number | null>>]
+    state: [number | null, Dispatch<SetStateAction<number | null>>]
 }
 
 const RatingScale: FC<IRatingScale> = ({ title, state }) => {
@@ -48,11 +49,13 @@ enum Composition {
     Comments
 }
 
+type groupActivity = IGroupActivity & { Id: string, Type: string }
+
 const Comments: FC = () => {
     const { teacher, disciplanaryTopics } = useContext(GlobalData)
     const [isLoading, setLoading] = useState(false)
-    const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null); // Категории слева
-    const [selectedDay, setSelectedDay] = useState<IDay | null>(null); // Дни сверху
+    const [selectedActivity, setSelectedActivity] = useState<IIndividualActivity | groupActivity | null>(null); // Категории слева
+    const [selectedDay, setSelectedDay] = useState<string | null>(null); // Дни сверху
     const [selectedTheme, setSelectedTheme] = useState<string | null>(null)
     const [openWindowThemes, setOpenWindowThemes] = useState(false);
     const [activeComposition, setActiveComposition] = useState(Composition.General);
@@ -64,13 +67,15 @@ const Comments: FC = () => {
     const [generalQuestions, setGeneralQuestions] = useState('');
     const [selectedStudentForComment, setSelectedStudentForComment] = useState<null | string>(null);
     const [individulComments, setIndividulComments] = useState<{ [key: string]: string }>({})
+    const [attendance, setAttendance] = useState<{ [key: string]: boolean }>({}) // Посещаемость, спасибо чудесному API хх, за необходимость добавления этого поля
+
     // Сброс выбранный рейтов
     const resetRate = () => {
         for (let surveyAnswer of surveyAnswers) {
             surveyAnswer[1](null);
         }
         setActiveComposition(Composition.General)
-        setIndividulComments({})
+        setAttendance({})
         setPositiveAspects('')
         setGrowthPoints('')
         setGeneralQuestions('')
@@ -101,9 +106,43 @@ const Comments: FC = () => {
             document.removeEventListener("mousedown", handleOutsideClick);
         };
     }, []);
-    const allActivities = (teacher.activitiesWithoutthemes === null ? [] : teacher.activitiesWithoutthemes) as IActivity[] // Все найденные активности, включая условные планерки
-    const activities = allActivities.filter(activity => Object.keys(disciplanaryTopics.allTopic).includes(activity.Discipline)) // Учебные активности, по дисциплинам из гугл таблицы
+    const individualActivities = (teacher.activitiesWithoutthemes === null
+        ? []
+        : teacher.activitiesWithoutthemes.individualData
+    ) as IIndividualActivity[] // Все найденные индивидуальные занятия
+    const otherActivities = (teacher.activitiesWithoutthemes === null
+        ? {}
+        : teacher.activitiesWithoutthemes.groupData
+    ) as { [key: string]: IGroupActivity } // Все найденные активности, кроме индивидуальных уроков, включая условные планерки
+
+    const groupActivities: groupActivity[] = []
+
+    // Убираем летучки и все, что на мне подходит исходя из темы группы
+    for (let groupActivityId in otherActivities) {
+        const groupActivity = otherActivities[groupActivityId]
+        const allDisciplanes = Object.keys(disciplanaryTopics.allTopic)
+        const groupDisciplane = groupActivity.Discipline
+        if (allDisciplanes.includes(groupDisciplane))
+            groupActivities.push({ ...groupActivity, Id: groupActivityId, Type: 'Group' })
+    }
+
+    const notActivities = individualActivities.length === 0 && Object.keys(groupActivities).length === 0
+
     const studentsByActivity = (selectedActivity?.Students && Object.keys(selectedActivity?.Students).length > 0) ? selectedActivity.Students : null
+
+    useEffect(() => {
+        if (studentsByActivity) {
+            const startedComment = Object.keys(studentsByActivity).reduce(
+                (acc, value) => {
+                    acc[value] = '';
+                    return acc;
+                },
+                {} as { [key: string]: string }
+            ) // объект id студентов - пустые строки (начальные комментарии)
+            setIndividulComments(startedComment)
+        }
+    }, [studentsByActivity])
+
     return (
         <section className={styles.wrapper}>
             <Header />
@@ -117,7 +156,7 @@ const Comments: FC = () => {
                             <div className={styles.wrapperLoader}>
                                 <Loader />
                             </div>
-                            : (activities.length === 0
+                            : (notActivities
                                 ? <div className={styles.notFindedActivities}>
                                     Нет уроков, требующих указания темы
                                     <button onClick={e => {
@@ -130,19 +169,21 @@ const Comments: FC = () => {
                                         Обновить
                                     </button>
                                 </div>
-                                : activities.map(
-                                    activity => <div
-                                        className={`${styles.findedActivities}  ${activity.Id === selectedActivity?.Id && styles.selected}`}
-                                        key={activity.Id}
+                                : [...groupActivities, ...individualActivities].map( // id групп
+                                    group => <div
+                                        className={`
+                                            ${styles.findedActivities}  ${group.Id === selectedActivity?.Id && styles.selected}`
+                                        }
+                                        key={group.Id}
                                         onClick={() => {
-                                            setSelectedActivity(activity);
+                                            setSelectedActivity(group);
                                             setSelectedDay(null);
                                             setSelectedTheme(null);
                                             resetRate()
                                         }}
                                     >
-                                        <div>{activity.Name}: {activity.Type}</div>
-                                        <div>{activity.Discipline}</div>
+                                        <div>{group.Name}: {group.Type}</div>
+                                        <div>{group.Discipline}</div>
                                     </div>
                                 )
                             )}
@@ -151,7 +192,7 @@ const Comments: FC = () => {
                     {selectedActivity && <>
                         <nav>
                             {selectedActivity.Days.map(day => <div
-                                key={day.Date}
+                                key={day}
                                 className={`${styles.oneDay} ${day === selectedDay && styles.selected}`}
                                 onClick={() => {
                                     setSelectedDay(day);
@@ -159,7 +200,7 @@ const Comments: FC = () => {
                                     resetRate()
                                 }}
                             >
-                                {formatDate(day.Date)}
+                                {formatDate(day)}
                             </div>
                             )}
                         </nav>
@@ -253,7 +294,19 @@ const Comments: FC = () => {
                                                 setSelectedStudentForComment(id)
                                             }}
                                         >
-                                            {fullName}
+                                            <h3 className={styles.studentName}>
+                                                {fullName}
+                                            </h3>
+                                            <div
+                                                className={styles.attendanceMark}
+                                                onClick={e => {
+                                                    e.stopPropagation();
+                                                    if (id in attendance) setAttendance({ ...attendance, [id]: !attendance[id] })
+                                                    else setAttendance({ ...attendance, [id]: true });
+                                                }}
+                                            >
+                                                {(id in attendance && attendance[id] === true) && <div />}
+                                            </div>
                                         </div>
                                     })}
                                 </div>}
@@ -267,8 +320,9 @@ const Comments: FC = () => {
                                 </button>
                                 <button onClick={e => {
                                     e.preventDefault();
+                                    console.log(individulComments)
                                     teacher.sendActivityData(
-                                        selectedActivity,
+                                        selectedActivity.Id,
                                         selectedDay,
                                         selectedTheme!,
                                         individulComments,
@@ -277,7 +331,8 @@ const Comments: FC = () => {
                                             positiveAspects,
                                             growthPoints,
                                             generalQuestions
-                                        }
+                                        },
+                                        attendance
                                     ).then(() => {
                                         resetRate()
                                         setSelectedDay(null);
