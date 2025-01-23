@@ -127,7 +127,7 @@ const Comments: FC = () => {
     }
 
     const notActivities = individualActivities.length === 0 && Object.keys(groupActivities).length === 0
-
+    console.log(JSON.stringify(selectedActivity))
     const studentsByActivity = (selectedActivity?.Students && Object.keys(selectedActivity?.Students).length > 0) ? selectedActivity.Students : null
 
     useEffect(() => {
@@ -182,7 +182,7 @@ const Comments: FC = () => {
                                             resetRate()
                                         }}
                                     >
-                                        <div>{group.Name}: {group.Type}</div>
+                                        <div>{group.Name}: {group.Type || 'Individual'}</div>
                                         <div>{group.Discipline}</div>
                                     </div>
                                 )
@@ -320,7 +320,7 @@ const Comments: FC = () => {
                                 </button>
                                 <button onClick={e => {
                                     e.preventDefault();
-                                    console.log(individulComments)
+  
                                     teacher.sendActivityData(
                                         selectedActivity.Id,
                                         selectedDay,
@@ -334,9 +334,13 @@ const Comments: FC = () => {
                                         },
                                         attendance
                                     ).then(() => {
+                                        // teacher.deleteActivity(selectedActivity.Id, selectedDay, selectedActivity.Type || 'Individual')
+                                        // teacher.getActivitiesForTeacherWithoutThemes()
                                         resetRate()
                                         setSelectedDay(null);
-                                    });
+                                    }).catch(
+                                        ()=>alert('Что-то пошло не так')
+                                    );
 
                                 }}>
                                     Сохранить

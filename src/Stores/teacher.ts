@@ -32,6 +32,27 @@ export default class Teacher {
         localStorage.setItem('teacherEmail', email);
     }
 
+    // deleteActivity(activityId: string, day: string, type: string) {
+    //     if (type === 'Individual') {
+    //         const findActivityId = this.activitiesWithoutthemes!.individualData.findIndex(les => les.Id === activityId);
+    //         const days = this.activitiesWithoutthemes!.individualData[findActivityId].Days
+    //         if (!days) return;
+    //         if (days.length === 1) {
+    //             delete this.activitiesWithoutthemes?.individualData[findActivityId]
+    //             return;
+    //         }
+    //         this.activitiesWithoutthemes!.individualData[findActivityId].Days.filter(anyDay => anyDay !== day)
+    //         return;
+    //     }
+    //     const days = this.activitiesWithoutthemes?.groupData[activityId].Days
+    //     if (!days) return;
+    //     if (days.length === 1) {
+    //         delete this.activitiesWithoutthemes?.groupData[activityId]
+    //         return;
+    //     }
+    //     this.activitiesWithoutthemes?.groupData[activityId].Days.filter(anyDay => anyDay !== day)
+    // }
+
     async checkVerification() {
         const possibleCode = localStorage.getItem('teacherCode');
         const possibleEmail = localStorage.getItem('teacherEmail');
@@ -76,7 +97,7 @@ export default class Teacher {
         individulComments: { [key: string]: string },
         rates: (number | null)[],
         generalComments: { [key: string]: string },
-        attendance: {[key: string]: boolean}
+        attendance: { [key: string]: boolean }
     ) {
         const ratesWithField: { [key: string]: number | null } = {}
         rates.forEach((rateValue, number) => { // Переделать, добавить сброс полей
