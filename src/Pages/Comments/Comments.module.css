@@ -404,9 +404,10 @@
         font-weight: 300;
         padding-left: 1vw;
 
-        &>h1 {
+        &>.textUnderStudentList {
             margin-bottom: 1vw;
-            font-size: 1vw;
+            font-size: 0.9vw;
+            margin-top: -2vw;
         }
 
         &>.studentCard {

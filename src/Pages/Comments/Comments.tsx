@@ -127,7 +127,6 @@ const Comments: FC = () => {
     }
 
     const notActivities = individualActivities.length === 0 && Object.keys(groupActivities).length === 0
-    console.log(JSON.stringify(selectedActivity))
     const studentsByActivity = (selectedActivity?.Students && Object.keys(selectedActivity?.Students).length > 0) ? selectedActivity.Students : null
 
     useEffect(() => {
@@ -284,14 +283,18 @@ const Comments: FC = () => {
                                         </>}
                                 </div>
                                 {studentsByActivity && <div className={styles.personalComments}>
-                                    <h1>Индивидуальные комментарии</h1>
+                                    <div className={styles.textUnderStudentList}>
+                                        Отметь кто присутствовал. <br />
+                                        Можешь оставить индивидуальный комментарий.
+                                    </div>
                                     {Object.entries(studentsByActivity).map(studentData => {
                                         const [id, fullName] = studentData;
                                         return <div
                                             key={id}
                                             className={`${styles.studentCard} ${id === selectedStudentForComment && styles.active}`}
                                             onClick={() => {
-                                                setSelectedStudentForComment(id)
+                                                if (id in attendance && attendance[id] === true)
+                                                    setSelectedStudentForComment(id)
                                             }}
                                         >
                                             <h3 className={styles.studentName}>
@@ -320,7 +323,10 @@ const Comments: FC = () => {
                                 </button>
                                 <button onClick={e => {
                                     e.preventDefault();
-  
+                                    if (!Object.values(attendance).some(value => value === true)) {
+                                        alert('Отметь, кто был на уроке');
+                                        return;
+                                    }
                                     teacher.sendActivityData(
                                         selectedActivity.Id,
                                         selectedDay,
@@ -335,12 +341,11 @@ const Comments: FC = () => {
                                         attendance
                                     ).then(() => {
                                         // teacher.deleteActivity(selectedActivity.Id, selectedDay, selectedActivity.Type || 'Individual')
-                                        // teacher.getActivitiesForTeacherWithoutThemes()
                                         resetRate()
                                         setSelectedDay(null);
                                     }).catch(
-                                        ()=>alert('Что-то пошло не так')
-                                    );
+                                        () => alert('Что-то пошло не так')
+                                    ).finally(() => teacher.getActivitiesForTeacherWithoutThemes());
 
                                 }}>
                                     Сохранить
