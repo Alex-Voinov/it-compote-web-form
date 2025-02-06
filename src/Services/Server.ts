@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import ITeacher from '../models/Teacher';
-import IActivityResponse from '../models/ActivityResponse';
+import Activity from '../models/Activity';
 
 //const API_URL = `http://compot-school.ru/api`; // для проды
 const API_URL = `http://localhost/api`; // для локалки
@@ -42,8 +42,8 @@ export default class Server {
 
     static getActivitiesForTeacherWithoutThemes(
         teacherId: string
-    ): Promise<AxiosResponse<IActivityResponse>> {
-        return $api.get<IActivityResponse>(
+    ): Promise<AxiosResponse<Activity[]>> {
+        return $api.get<Activity[]>(
             '/get-activities-for-teacher-without-themes',
             {
                 params: {

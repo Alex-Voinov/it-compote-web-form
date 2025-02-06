@@ -1,15 +1,16 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, runInAction, toJS } from "mobx";
 import ITeacher from "../models/Teacher";
 import Server from "../Services/Server";
 import { surveyFields } from "../Pages/Comments/Comments";
-import IActivityResponse from "../models/ActivityResponse";
+import Activity from "../models/Activity";
+
 
 export default class Teacher {
 
     teacher: ITeacher | null = null
     teacherCode: string = '';
     isAuth: boolean = false;
-    activitiesWithoutthemes: null | IActivityResponse = null
+    activitiesWithoutthemes: null | Activity[] = null
 
     constructor() {
         makeAutoObservable(this)
@@ -32,26 +33,34 @@ export default class Teacher {
         localStorage.setItem('teacherEmail', email);
     }
 
-    // deleteActivity(activityId: string, day: string, type: string) {
-    //     if (type === 'Individual') {
-    //         const findActivityId = this.activitiesWithoutthemes!.individualData.findIndex(les => les.Id === activityId);
-    //         const days = this.activitiesWithoutthemes!.individualData[findActivityId].Days
-    //         if (!days) return;
-    //         if (days.length === 1) {
-    //             delete this.activitiesWithoutthemes?.individualData[findActivityId]
-    //             return;
-    //         }
-    //         this.activitiesWithoutthemes!.individualData[findActivityId].Days.filter(anyDay => anyDay !== day)
-    //         return;
-    //     }
-    //     const days = this.activitiesWithoutthemes?.groupData[activityId].Days
-    //     if (!days) return;
-    //     if (days.length === 1) {
-    //         delete this.activitiesWithoutthemes?.groupData[activityId]
-    //         return;
-    //     }
-    //     this.activitiesWithoutthemes?.groupData[activityId].Days.filter(anyDay => anyDay !== day)
-    // }
+    deleteActivity(selectedActivity: Activity, selectedDay: string, activityData: Activity[]) {
+        console.log('Было')
+        console.log(toJS(this.activitiesWithoutthemes))
+        runInAction(() => {
+            if (selectedActivity.Days.length === 1) {
+                const activityListWithoutOldActivity = activityData.filter(act => act.Id !== selectedActivity.Id);
+                this.activitiesWithoutthemes = activityListWithoutOldActivity;
+            }
+            else {
+                const activityListWithoutOneDay = activityData.map(
+                    act => {
+                        if (act.Id === selectedActivity.Id) {
+                            console.log('активность найдена')
+                            return {
+                                ...act,
+                                Days: act.Days.filter(day => day !== selectedDay)
+                            }
+                        }
+                        return act
+                    }
+
+                );
+                this.activitiesWithoutthemes = activityListWithoutOneDay;
+            }
+            console.log('Стало')
+            console.log(toJS(this.activitiesWithoutthemes))
+        })
+    }
 
     async checkVerification() {
         const possibleCode = localStorage.getItem('teacherCode');
@@ -86,7 +95,7 @@ export default class Teacher {
         const serverResponse = await Server.getActivitiesForTeacherWithoutThemes(String(this.teacher?.Id));
         const findActivities = serverResponse.data
         runInAction(() => {
-            this.activitiesWithoutthemes = findActivities ? findActivities : null;
+            this.activitiesWithoutthemes = findActivities && Array.isArray(findActivities) ? findActivities : null;
         });
     }
 

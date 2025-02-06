@@ -3,10 +3,10 @@ import Header from '../../Components/UI/Header/Header'
 import styles from './Comments.module.css'
 import { observer } from 'mobx-react-lite'
 import { GlobalData } from '../../main'
-import IIndividualActivity from '../../models/IndividualActivity'
 import Loader from '../../Components/Decoration/Loader/Loader'
 import formatDate from '../../utilities/formatedTime'
-import IGroupActivity from '../../models/GroupActivity'
+import getWeekday from '../../utilities/getWeekDay'
+import Activity from '../../models/Activity'
 
 
 export const surveyFields = {
@@ -49,12 +49,11 @@ enum Composition {
     Comments
 }
 
-type groupActivity = IGroupActivity & { Id: string, Type: string }
 
 const Comments: FC = () => {
     const { teacher, disciplanaryTopics } = useContext(GlobalData)
     const [isLoading, setLoading] = useState(false)
-    const [selectedActivity, setSelectedActivity] = useState<IIndividualActivity | groupActivity | null>(null); // Категории слева
+    const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null); // Категории слева
     const [selectedDay, setSelectedDay] = useState<string | null>(null); // Дни сверху
     const [selectedTheme, setSelectedTheme] = useState<string | null>(null)
     const [openWindowThemes, setOpenWindowThemes] = useState(false);
@@ -106,27 +105,13 @@ const Comments: FC = () => {
             document.removeEventListener("mousedown", handleOutsideClick);
         };
     }, []);
-    const individualActivities = (teacher.activitiesWithoutthemes === null
-        ? []
-        : teacher.activitiesWithoutthemes.individualData
-    ) as IIndividualActivity[] // Все найденные индивидуальные занятия
-    const otherActivities = (teacher.activitiesWithoutthemes === null
-        ? {}
-        : teacher.activitiesWithoutthemes.groupData
-    ) as { [key: string]: IGroupActivity } // Все найденные активности, кроме индивидуальных уроков, включая условные планерки
 
-    const groupActivities: groupActivity[] = []
+    const allDisciplanes = Object.keys(disciplanaryTopics.allTopic)
+    const activities = teacher.activitiesWithoutthemes? teacher.activitiesWithoutthemes.filter(
+        act => act.Type === 'Individual' || allDisciplanes.includes(act.Discipline)
+    ) : []
 
-    // Убираем летучки и все, что на мне подходит исходя из темы группы
-    for (let groupActivityId in otherActivities) {
-        const groupActivity = otherActivities[groupActivityId]
-        const allDisciplanes = Object.keys(disciplanaryTopics.allTopic)
-        const groupDisciplane = groupActivity.Discipline
-        if (allDisciplanes.includes(groupDisciplane))
-            groupActivities.push({ ...groupActivity, Id: groupActivityId, Type: 'Group' })
-    }
-
-    const notActivities = individualActivities.length === 0 && Object.keys(groupActivities).length === 0
+    const notActivities = activities.length === 0
     const studentsByActivity = (selectedActivity?.Students && Object.keys(selectedActivity?.Students).length > 0) ? selectedActivity.Students : null
 
     useEffect(() => {
@@ -168,7 +153,7 @@ const Comments: FC = () => {
                                         Обновить
                                     </button>
                                 </div>
-                                : [...groupActivities, ...individualActivities].map( // id групп
+                                : activities.map( // id групп
                                     group => <div
                                         className={`
                                             ${styles.findedActivities}  ${group.Id === selectedActivity?.Id && styles.selected}`
@@ -181,8 +166,9 @@ const Comments: FC = () => {
                                             resetRate()
                                         }}
                                     >
-                                        <div>{group.Name}: {group.Type || 'Individual'}</div>
+                                        <div>{group.Name}: {group.Type}</div>
                                         <div>{group.Discipline}</div>
+                                        <div>Занятие проходит {getWeekday(group.Days[0])} с {group.BeginTime} до {group.EndTime}</div>
                                     </div>
                                 )
                             )}
@@ -327,6 +313,7 @@ const Comments: FC = () => {
                                         alert('Отметь, кто был на уроке');
                                         return;
                                     }
+                                    console.log('Запрос отправлен')
                                     teacher.sendActivityData(
                                         selectedActivity.Id,
                                         selectedDay,
@@ -340,12 +327,12 @@ const Comments: FC = () => {
                                         },
                                         attendance
                                     ).then(() => {
-                                        // teacher.deleteActivity(selectedActivity.Id, selectedDay, selectedActivity.Type || 'Individual')
+                                        teacher.deleteActivity(selectedActivity, selectedDay, activities)
                                         resetRate()
                                         setSelectedDay(null);
                                     }).catch(
                                         () => alert('Что-то пошло не так')
-                                    ).finally(() => teacher.getActivitiesForTeacherWithoutThemes());
+                                    ).finally(() => setSelectedActivity(null));
 
                                 }}>
                                     Сохранить
@@ -355,8 +342,8 @@ const Comments: FC = () => {
                         }
                     </>}
                 </section>
-            </main>
-        </section>
+            </main >
+        </section >
     )
 }
 
