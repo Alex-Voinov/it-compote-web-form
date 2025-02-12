@@ -309,10 +309,6 @@ const Comments: FC = () => {
                                 </button>
                                 <button onClick={e => {
                                     e.preventDefault();
-                                    if (!Object.values(attendance).some(value => value === true)) {
-                                        alert('Отметь, кто был на уроке');
-                                        return;
-                                    }
                                     console.log('Запрос отправлен')
                                     teacher.sendActivityData(
                                         selectedActivity.Id,
