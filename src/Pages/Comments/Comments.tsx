@@ -309,7 +309,6 @@ const Comments: FC = () => {
                                 </button>
                                 <button onClick={e => {
                                     e.preventDefault();
-                                    console.log('Запрос отправлен')
                                     teacher.sendActivityData(
                                         selectedActivity.Id,
                                         selectedDay,
@@ -327,7 +326,7 @@ const Comments: FC = () => {
                                         resetRate()
                                         setSelectedDay(null);
                                     }).catch(
-                                        () => alert('Что-то пошло не так')
+                                        (er) => console.log(er)
                                     ).finally(() => setSelectedActivity(null));
 
                                 }}>

@@ -116,6 +116,7 @@ export default class Teacher {
             ClientId: this.teacher!.Id,
             FullName: `${this.teacher?.LastName} ${this.teacher?.FirstName}`
         }
+        Object.keys(individulComments).forEach(studentId=>{if(!(studentId in attendance))attendance[studentId]=false})
         await Server.sendActivityData(
             activityId,
             date,
