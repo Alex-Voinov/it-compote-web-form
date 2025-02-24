@@ -107,7 +107,7 @@ const Comments: FC = () => {
     }, []);
 
     const allDisciplanes = Object.keys(disciplanaryTopics.allTopic)
-    const activities = teacher.activitiesWithoutthemes? teacher.activitiesWithoutthemes.filter(
+    const activities = teacher.activitiesWithoutthemes ? teacher.activitiesWithoutthemes.filter(
         act => act.Type === 'Individual' || allDisciplanes.includes(act.Discipline)
     ) : []
 
@@ -115,17 +115,21 @@ const Comments: FC = () => {
     const studentsByActivity = (selectedActivity?.Students && Object.keys(selectedActivity?.Students).length > 0) ? selectedActivity.Students : null
 
     useEffect(() => {
-        if (studentsByActivity) {
-            const startedComment = Object.keys(studentsByActivity).reduce(
+        if (studentsByActivity && selectedDay && selectedActivity) {
+            const startedComment = Object.entries(studentsByActivity).filter(
+                studentData =>  selectedActivity.Type === 'Individual' || studentData[1].days.includes(selectedDay)  
+            ).reduce(
                 (acc, value) => {
-                    acc[value] = '';
+                    acc[value[0]] = '';
                     return acc;
                 },
                 {} as { [key: string]: string }
             ) // объект id студентов - пустые строки (начальные комментарии)
             setIndividulComments(startedComment)
         }
-    }, [studentsByActivity])
+    }, [selectedActivity, selectedDay])
+
+    console.log(individulComments);
 
     return (
         <section className={styles.wrapper}>
@@ -228,7 +232,7 @@ const Comments: FC = () => {
                                 <div className={styles.mainComments}>
                                     <h1>
                                         {selectedStudentForComment
-                                            ? studentsByActivity![selectedStudentForComment]
+                                            ? studentsByActivity![selectedStudentForComment].name
                                             : 'Общие комментарии'}
                                     </h1>
                                     {selectedStudentForComment
@@ -273,8 +277,10 @@ const Comments: FC = () => {
                                         Отметь кто присутствовал. <br />
                                         Можешь оставить индивидуальный комментарий.
                                     </div>
-                                    {Object.entries(studentsByActivity).map(studentData => {
-                                        const [id, fullName] = studentData;
+                                    {Object.entries(studentsByActivity).filter(
+                                        studentData => selectedActivity.Type === 'Individual' || studentData[1].days.includes(selectedDay)  
+                                    ).map(studentData => {
+                                        const [id, studentInfo] = studentData;
                                         return <div
                                             key={id}
                                             className={`${styles.studentCard} ${id === selectedStudentForComment && styles.active}`}
@@ -284,7 +290,7 @@ const Comments: FC = () => {
                                             }}
                                         >
                                             <h3 className={styles.studentName}>
-                                                {fullName}
+                                                {studentInfo.name}
                                             </h3>
                                             <div
                                                 className={styles.attendanceMark}

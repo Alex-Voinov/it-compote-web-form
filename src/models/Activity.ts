@@ -3,7 +3,12 @@ export default interface Activity {
     Name: string,
     Discipline: string,
     Days: string[],
-    Students: {[key: string]: string} // Объект ClientId - ФИО,
+    Students: {
+        [key: string]: {
+            name: string,
+            days: string[]
+        }
+    } // Объект ClientId - {name: ФИО, days: дни занятий},
     Type: 'Individual' | 'Group',
     BeginTime: string,
     EndTime: string,
