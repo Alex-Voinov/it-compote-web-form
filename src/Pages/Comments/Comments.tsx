@@ -117,7 +117,7 @@ const Comments: FC = () => {
     useEffect(() => {
         if (studentsByActivity && selectedDay && selectedActivity) {
             const startedComment = Object.entries(studentsByActivity).filter(
-                studentData =>  selectedActivity.Type === 'Individual' || studentData[1].days.includes(selectedDay)  
+                studentData => selectedActivity.Type === 'Individual' || studentData[1].days.includes(selectedDay)
             ).reduce(
                 (acc, value) => {
                     acc[value[0]] = '';
@@ -126,10 +126,13 @@ const Comments: FC = () => {
                 {} as { [key: string]: string }
             ) // объект id студентов - пустые строки (начальные комментарии)
             setIndividulComments(startedComment)
+            const startedAttendance = Object.keys(startedComment).reduce((acc, id) => {
+                acc[id] = true;
+                return acc;
+            }, {} as { [key: string]: boolean })
+            setAttendance(startedAttendance)
         }
     }, [selectedActivity, selectedDay])
-
-    console.log(individulComments);
 
     return (
         <section className={styles.wrapper}>
@@ -278,14 +281,14 @@ const Comments: FC = () => {
                                         Можешь оставить индивидуальный комментарий.
                                     </div>
                                     {Object.entries(studentsByActivity).filter(
-                                        studentData => selectedActivity.Type === 'Individual' || studentData[1].days.includes(selectedDay)  
+                                        studentData => selectedActivity.Type === 'Individual' || studentData[1].days.includes(selectedDay)
                                     ).map(studentData => {
                                         const [id, studentInfo] = studentData;
                                         return <div
                                             key={id}
                                             className={`${styles.studentCard} ${id === selectedStudentForComment && styles.active}`}
                                             onClick={() => {
-                                                if (id in attendance && attendance[id] === true)
+                                                if (attendance[id] === false)
                                                     setSelectedStudentForComment(id)
                                             }}
                                         >
@@ -296,11 +299,11 @@ const Comments: FC = () => {
                                                 className={styles.attendanceMark}
                                                 onClick={e => {
                                                     e.stopPropagation();
-                                                    if (id in attendance) setAttendance({ ...attendance, [id]: !attendance[id] })
-                                                    else setAttendance({ ...attendance, [id]: true });
+                                                    setAttendance({ ...attendance, [id]: !attendance[id] })
+                                                    console.log(attendance)
                                                 }}
                                             >
-                                                {(id in attendance && attendance[id] === true) && <div />}
+                                                {(attendance[id] === false) && <div />}
                                             </div>
                                         </div>
                                     })}
