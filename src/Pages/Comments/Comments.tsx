@@ -7,6 +7,7 @@ import Loader from '../../Components/Decoration/Loader/Loader'
 import formatDate from '../../utilities/formatedTime'
 import getWeekday from '../../utilities/getWeekDay'
 import Activity from '../../models/Activity'
+import FullScreanLoader from '../../Components/Decorate/FullScreanLoader/FullScreanLoader'
 
 
 export const surveyFields = {
@@ -55,7 +56,8 @@ const Comments: FC = () => {
     const [isLoading, setLoading] = useState(false)
     const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null); // Категории слева
     const [selectedDay, setSelectedDay] = useState<string | null>(null); // Дни сверху
-    const [selectedTheme, setSelectedTheme] = useState<string | null>(null)
+    const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+    const [isSendingReq, setSendingReq] = useState(false);
     const [openWindowThemes, setOpenWindowThemes] = useState(false);
     const [activeComposition, setActiveComposition] = useState(Composition.General);
     const surveyAnswers = Object.keys(surveyFields).map(() => useState<number | null>(null))
@@ -136,6 +138,7 @@ const Comments: FC = () => {
 
     return (
         <section className={styles.wrapper}>
+            {isSendingReq && <FullScreanLoader />}
             <Header />
             <main>
                 <section className={styles.activitiesList}>
@@ -318,6 +321,7 @@ const Comments: FC = () => {
                                 </button>
                                 <button onClick={e => {
                                     e.preventDefault();
+                                    setSendingReq(true);
                                     teacher.sendActivityData(
                                         selectedActivity.Id,
                                         selectedDay,
@@ -336,7 +340,10 @@ const Comments: FC = () => {
                                         setSelectedDay(null);
                                     }).catch(
                                         (er) => console.log(er)
-                                    ).finally(() => setSelectedActivity(null));
+                                    ).finally(() => { 
+                                        setSelectedActivity(null);
+                                        setSendingReq(false);
+                                    });
 
                                 }}>
                                     Сохранить
