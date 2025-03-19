@@ -3,6 +3,7 @@ import ITeacher from "../models/Teacher";
 import Server from "../Services/Server";
 import { surveyFields } from "../Pages/Comments/Comments";
 import Activity from "../models/Activity";
+import IMonthlyPaymentSummary from "../models/MonthlyPaymentSummary";
 
 
 export default class Teacher {
@@ -11,6 +12,8 @@ export default class Teacher {
     teacherCode: string = '';
     isAuth: boolean = false;
     activitiesWithoutthemes: null | Activity[] = null
+
+    payments: IMonthlyPaymentSummary[] = []
 
     constructor() {
         makeAutoObservable(this)
@@ -99,6 +102,14 @@ export default class Teacher {
         });
     }
 
+    async getPaymentsData() {
+        const teacherName = `${this.teacher!.LastName} ${this.teacher!.FirstName}`
+        const response = await Server.getPaymentsData(teacherName);
+        if (!Array.isArray(response.data)) return null
+        this.payments = response.data
+        return this.payments[0]
+    }
+
     async sendActivityData(
         activityId: string,
         date: string,
@@ -116,7 +127,7 @@ export default class Teacher {
             ClientId: this.teacher!.Id,
             FullName: `${this.teacher?.LastName} ${this.teacher?.FirstName}`
         }
-        Object.keys(individulComments).forEach(studentId=>{if(!(studentId in attendance))attendance[studentId]=false})
+        Object.keys(individulComments).forEach(studentId => { if (!(studentId in attendance)) attendance[studentId] = false })
         await Server.sendActivityData(
             activityId,
             date,

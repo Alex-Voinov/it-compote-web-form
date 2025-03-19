@@ -1,9 +1,10 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import ITeacher from '../models/Teacher';
 import Activity from '../models/Activity';
+import IMonthlyPaymentSummary from '../models/MonthlyPaymentSummary';
 
-//const API_URL = `http://compot-school.ru/api`; // для проды
-const API_URL = `http://localhost/api`; // для локалки
+const API_URL = `http://compot-school.ru/api`; // для проды
+//const API_URL = `http://localhost/api`; // для локалки
 
 const $api = axios.create({
     withCredentials: true,
@@ -38,6 +39,17 @@ export default class Server {
     }
     static getTopicsAcrossDisciplines(): Promise<AxiosResponse<{ [key: string]: string[] }>> {
         return $api.get<{ [key: string]: string[] }>('/get-topics-across-disciplines')
+    }
+
+    static getPaymentsData(teacherName: string): Promise<AxiosResponse<IMonthlyPaymentSummary[]>> {
+        return $api.get<IMonthlyPaymentSummary[]>(
+            '/get-payments-data',
+            {
+                params: {
+                    teacherName
+                }
+            }
+        )
     }
 
     static getActivitiesForTeacherWithoutThemes(

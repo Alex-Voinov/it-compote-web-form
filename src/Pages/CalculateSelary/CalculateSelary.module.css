@@ -1,13 +1,170 @@
-.wrapper{
+.wrapper {
     width: 100vw;
     height: 100vh;
-    &>main{
+
+    &>main {
         width: 100%;
         height: calc(100vh - 4vw);
-        display: flex;
-        align-items: center;
-        justify-content: center;
         color: #b5bec0;
-        font-style: 2vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
+}
+
+.mainContent {
+    width: 80vw;
+    height: 100%;
+}
+
+.monthsRow {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2vw;
+
+    &>.total{
+        font-size: 1.2vw;
+    }
+
+    &>.mountWrapper {
+        display: flex;
+        width: 50%;
+
+        &>div {
+            border-radius: 0.6vw;
+            width: 10vw;
+            height: 2vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #34393D;
+            color: #b5bec0;
+            font-size: 1vw;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+
+            &:hover {
+                background-color: #71787e;
+                color: aliceblue;
+            }
+
+            &.active {
+                background-color: #b3b8bd;
+                color: #101113;
+                cursor: default !important;
+            }
+
+            &:not(:first-of-type) {
+                margin-left: 2vw;
+            }
+        }
+    }
+
+
+}
+
+.paymentData {
+    margin-top: 2vw;
+    width: 100%;
+    background-color: #34393D;
+    color: #b5bec0;
+    border: 0.1vw solid white;
+    height: calc(100vh - 12vw);
+    border-radius: 0.6vw;
+    overflow: hidden;
+
+    &>main {
+        width: 100%;
+        overflow-y: auto;
+        max-height: calc(100vh - 15vw);
+
+        &::-webkit-scrollbar {
+            width: 0.6vw;
+            background-color: #34393D;
+            border-left: 0.1vw solid white;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #b5bec0 !important;
+        }
+
+
+        &::-webkit-scrollbar-button:vertical:start:decrement {
+            background-color: #b5bec0 !important;
+            display: none
+        }
+
+        &::-webkit-scrollbar-button:vertical:end:increment {
+            background-color: #b5bec0 !important;
+            display: none
+        }
+
+        &::-webkit-scrollbar-button:horizontal:start:decrement {
+            background-color: #b5bec0;
+            display: none
+        }
+
+        &::-webkit-scrollbar-button:horizontal:end:increment {
+            background-color: #b5bec0;
+            display: none
+        }
+    }
+
+    &>header {
+        font-size: 1vw;
+        border-bottom: 0.1vw solid #b5bec0;
+        height: 2vw;
+        padding: 0;
+    }
+
+    & .row {
+        font-size: 0.8vw;
+    }
+
+    &>header,
+    & .row {
+        width: 100%;
+        min-height: 2vw;
+        height: min-content;
+        display: flex;
+
+        &:not(:last-of-type) {
+            border-bottom: 0.1vw solid #b5bec0;
+        }
+
+        &>div {
+            text-align: center;
+            line-height: 140%;
+            min-height: 100%;
+            height: max-content;
+            padding: 0.8vw 0.2vw 0.8vw 0.2vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+}
+
+.loadBlock{
+    width: 20vw;
+    height: calc(100vh - 10vw);
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1vw;
+    &>div{
+        width: 20vw;
+        height: 20vw;
+    }
+}
+
+.notFound{
+    text-align: center;
+    margin-top: calc(50vh - 2vw);
+    font-size: 1.4vw;
 }
